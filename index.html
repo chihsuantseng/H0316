@@ -3,32 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>醫療耗材訂購</title>
+    <title>訂購商品</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        button {
+            background-color: #00c300;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #009900;
+        }
+    </style>
 </head>
 <body>
-    <h2>選擇要訂購的耗材</h2>
-    <select id="product">
-        <option value="手套">手套</option>
-        <option value="口罩">口罩</option>
-        <option value="針筒">針筒</option>
-    </select>
-    <button onclick="submitOrder()">提交訂單</button>
+    <h1>訂購商品</h1>
+    <div class="container">
+        <label for="product">選擇商品：</label>
+        <select id="product">
+            <option value="醫療耗材A">醫療耗材A</option>
+            <option value="醫療耗材B">醫療耗材B</option>
+            <option value="醫療耗材C">醫療耗材C</option>
+        </select>
+        <br><br>
+        <label for="quantity">數量：</label>
+        <input type="number" id="quantity" value="1" min="1" />
+        <br><br>
+        <button onclick="showOrder()">查看訂單</button>
+    </div>
+
+    <div id="order-summary" style="display: none; margin-top: 20px;">
+        <h2>訂單明細</h2>
+        <p id="order-details"></p>
+        <button onclick="sendOrder()">送出訂單</button>
+    </div>
 
     <script>
-        function submitOrder() {
-            liff.init({ liffId: "LIFF_ID" })
-            .then(() => {
-                if (!liff.isLoggedIn()) liff.login();
-                var selectedProduct = document.getElementById("product").value;
-                liff.sendMessages([
-                    { type: "text", text: "我要訂購 " + selectedProduct }
-                ]).then(() => {
-                    alert("訂購成功！");
-                    liff.closeWindow();
-                }).catch(err => console.error(err));
-            });
+        let liffId = 'LIFF_ID'; // 在這裡填入你的 LIFF ID
+
+        // 初始化 LIFF SDK
+        function initializeLiff() {
+            liff.init({ liffId: liffId })
+                .then(() => {
+                    console.log('LIFF 初始化成功');
+                })
+                .catch((error) => {
+                    console.error('LIFF 初始化失敗', error);
+                });
         }
+
+        // 顯示訂單明細
+        function showOrder() {
+            const product = document.getElementById("product").value;
+            const quantity = document.getElementById("quantity").value;
+
+            const orderDetails = `商品：${product}\n數量：${quantity}`;
+            document.getElementById("order-details").innerText = orderDetails;
+
+            // 顯示訂單摘要區塊
+            document.getElementById("order-summary").style.display = "block";
+        }
+
+        // 發送訂單訊息
+        function sendOrder() {
+            const product = document.getElementById("product").value;
+            const quantity = document.getElementById("quantity").value;
+
+            const orderMessage = `訂單資訊：\n商品：${product}\n數量：${quantity}`;
+
+            if (liff.isLoggedIn()) {
+                // 發送訊息到 LINE 聊天
+                liff.sendMessages([{
+                    type: 'text',
+                    text: orderMessage
+                }])
+                .then(() => {
+                    alert('訂單已送出');
+                })
+                .catch((error) => {
+                    console.error('發送訂單失敗', error);
+                });
+            } else {
+                alert('請先登入 LINE');
+            }
+        }
+
+        // 頁面載入時初始化 LIFF
+        window.onload = function() {
+            initializeLiff();
+        };
     </script>
 </body>
 </html>
