@@ -52,16 +52,19 @@
     <script>
         let liffId = 'LIFF_ID'; // 在這裡填入你的 LIFF ID
 
-        // 初始化 LIFF SDK
         function initializeLiff() {
-            liff.init({ liffId: liffId })
-                .then(() => {
-                    console.log('LIFF 初始化成功');
-                })
-                .catch((error) => {
-                    console.error('LIFF 初始化失敗', error);
-                });
-        }
+    liff.init({ liffId: liffId })
+        .then(() => {
+            if (!liff.isLoggedIn()) {
+                liff.login();
+            } else {
+                console.log('已經登入');
+            }
+        })
+        .catch((error) => {
+            console.error('LIFF 初始化失敗', error);
+        });
+}
 
         // 顯示訂單明細
         function showOrder() {
@@ -75,29 +78,32 @@
             document.getElementById("order-summary").style.display = "block";
         }
 
-        // 發送訂單訊息到 LINE 聊天
         function sendOrder() {
-            const product = document.getElementById("product").value;
-            const quantity = document.getElementById("quantity").value;
+    const product = document.getElementById("product").value;
+    const quantity = document.getElementById("quantity").value;
 
-            const orderMessage = `訂單資訊：\n商品：${product}\n數量：${quantity}`;
+    const orderMessage = `訂單資訊：\n商品：${product}\n數量：${quantity}`;
 
-            if (liff.isLoggedIn()) {
-                // 發送訊息到 LINE 聊天
-                liff.sendMessages([{
-                    type: 'text',
-                    text: orderMessage
-                }])
-                .then(() => {
-                    alert('訂單已送出');
-                })
-                .catch((error) => {
-                    console.error('發送訂單失敗', error);
-                });
-            } else {
-                alert('請先登入 LINE');
-            }
+    liff.getProfile().then(profile => {
+        if (liff.isLoggedIn()) {
+            liff.sendMessages([{
+                type: 'text',
+                text: orderMessage
+            }])
+            .then(() => {
+                alert('訂單已送出');
+            })
+            .catch((error) => {
+                console.error('發送訂單失敗', error);
+            });
+        } else {
+            alert('請先登入 LINE');
         }
+    }).catch(error => {
+        console.error('無法獲取用戶資訊', error);
+    });
+}
+
 
         // 頁面載入時初始化 LIFF
         window.onload = function() {
