@@ -1,1 +1,0 @@
-let liffId = process.env.NEXT_PUBLIC_LIFF_ID;  // 無法直接在前端使用 process.env, 必須在構建時注入
