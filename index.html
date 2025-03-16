@@ -54,7 +54,7 @@
 
         // 初始化 LIFF SDK
         function initializeLiff() {
-            liff.init({ liffId: liffId })
+            liff.init({liffId})
                 .then(() => {
                     console.log('LIFF 初始化成功');
                     if (liff.isLoggedIn()) {
