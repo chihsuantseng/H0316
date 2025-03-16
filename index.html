@@ -142,25 +142,21 @@
     </div>
 
     <script>
-        let liffId; // 儲存 LIFF ID
-        let orderItemCount = 1;
-    
-        // 透過 API 取得 LIFF ID 並初始化 LIFF
+        let liffId  = null; // 在這裡填入你的 LIFF ID
+
         fetch('/api/liff/getLiffId')
-            .then(response => response.json())
-            .then(data => {
-                liffId = data.liffId;
-                initializeLiff(); // 確保取得 LIFF ID 後才初始化
-            })
-            .catch(error => console.error("無法獲取 LIFF ID", error));
-    
+        .then(response => response.json())
+        .then(data => {
+            liff.init({ liffId: data.liffId })
+            .then(() => console.log("LIFF 初始化成功"))
+            .catch(err => console.error("LIFF 初始化失敗", err));
+        })
+  .catch(error => console.error("無法獲取 LIFF ID", error));
+
+        let orderItemCount = 1;
+
         // 初始化 LIFF SDK
         function initializeLiff() {
-            if (!liffId) {
-                console.error('LIFF ID 未正確取得');
-                return;
-            }
-    
             liff.init({ liffId: liffId })
                 .then(() => {
                     console.log('LIFF 初始化成功');
@@ -168,6 +164,7 @@
                         console.log('用戶已登入');
                     } else {
                         console.log('用戶尚未登入，將執行登入');
+                        // 強制執行登入
                         liff.login();
                     }
                 })
@@ -175,7 +172,7 @@
                     console.error('LIFF 初始化失敗', error);
                 });
         }
-    
+
         // 新增商品
         function addItem() {
             const container = document.getElementById('order-items-container');
@@ -196,47 +193,39 @@
             container.appendChild(newItem);
             orderItemCount++;
         }
-    
+
         // 刪除商品
         function removeItem(index) {
             const itemToRemove = document.getElementById(`item-${index}`);
-            if (itemToRemove) {
-                itemToRemove.remove();
-            }
+            itemToRemove.remove();
         }
-    
+
         // 顯示訂單明細
         function showOrder() {
             let orderDetails = '';
-            for (let i = 1; i < orderItemCount; i++) { // 修正 i 從 1 開始
-                const productElement = document.getElementById(`product-${i}`);
-                const quantityElement = document.getElementById(`quantity-${i}`);
-                if (productElement && quantityElement) {
-                    const product = productElement.value;
-                    const quantity = quantityElement.value;
-                    orderDetails += `商品：${product}\n數量：${quantity}\n\n`;
-                }
+            for (let i = 0; i < orderItemCount; i++) {
+                const product = document.getElementById(`product-${i}`).value;
+                const quantity = document.getElementById(`quantity-${i}`).value;
+                orderDetails += `商品：${product}\n數量：${quantity}\n\n`;
             }
             document.getElementById("order-details").innerText = orderDetails;
+
+            // 顯示訂單摘要區塊
             document.getElementById("order-summary").style.display = "block";
         }
-    
+
         // 發送訂單訊息到 LINE 聊天
         function sendOrder() {
             let orderMessage = '訂單資訊：\n';
-            for (let i = 1; i < orderItemCount; i++) { // 修正 i 從 1 開始
-                const productElement = document.getElementById(`product-${i}`);
-                const quantityElement = document.getElementById(`quantity-${i}`);
-                if (productElement && quantityElement) {
-                    const product = productElement.value;
-                    const quantity = quantityElement.value;
-                    orderMessage += `商品：${product}\n數量：${quantity}\n`;
-                }
+            for (let i = 0; i < orderItemCount; i++) {
+                const product = document.getElementById(`product-${i}`).value;
+                const quantity = document.getElementById(`quantity-${i}`).value;
+                orderMessage += `商品：${product}\n數量：${quantity}\n`;
             }
-    
+
             console.log('送出訂單前，檢查登入狀態');
             console.log('liff.isLoggedIn() 狀態：', liff.isLoggedIn());
-    
+
             if (liff.isLoggedIn()) {
                 console.log('用戶已登入');
                 liff.sendMessages([{
@@ -245,7 +234,7 @@
                 }])
                 .then(() => {
                     alert('訂單已送出！');
-                    liff.closeWindow();
+                    liff.closeWindow(); //  關閉 LIFF 頁面
                 })
                 .catch((error) => {
                     console.error('發送訂單失敗', error);
@@ -255,7 +244,11 @@
                 alert('請先登入 LINE');
             }
         }
+
+        // 頁面載入時初始化 LIFF
+        window.onload = function() {
+            initializeLiff();
+        };
     </script>
-    
 </body>
 </html>
