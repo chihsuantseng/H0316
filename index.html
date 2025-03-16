@@ -223,7 +223,7 @@
                 }])
                 .then(() => {
                     alert('訂單已送出！');
-                    window.close();
+                    liff.closeWindow(); //  關閉 LIFF 頁面
                 })
                 .catch((error) => {
                     console.error('發送訂單失敗', error);
