@@ -7,40 +7,128 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
         }
-        .container {
-            margin-top: 20px;
-        }
-        button {
+
+        header {
             background-color: #00c300;
             color: white;
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            border-bottom: 3px solid #009900;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-item select, .order-item input {
+            padding: 8px;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            width: 150px;
+        }
+
+        .order-item button {
+            padding: 8px 12px;
+            background-color: #ff4d4d;
+            color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
-        button:hover {
+
+        .order-item button:hover {
+            background-color: #ff1a1a;
+        }
+
+        .btn {
+            background-color: #00c300;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
             background-color: #009900;
         }
-        .order-item {
-            margin-top: 10px;
+
+        #order-summary {
+            margin-top: 30px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #order-details {
+            font-size: 16px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        .order-item label {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .order-item input[type="number"] {
+            width: 80px;
+            text-align: center;
+        }
+
+        .order-item select {
+            width: 170px;
+            font-size: 20px; /* 增加字體大小 */
         }
         .order-item select, .order-item input {
-            margin-right: 10px;
-        }
+        font-size: 16px; /* 增加字體大小 */
+    }
+
+    .order-item label {
+        font-size: 18px; /* 增加字體大小 */
+    }
     </style>
 </head>
 <body>
-    <h1>訂購商品</h1>
+    <header>
+        <h1>訂購商品</h1>
+    </header>
+
     <div class="container">
         <div id="order-items-container">
-            <div class="order-item">
+            <div class="order-item" id="item-0">
                 <label for="product-0">選擇商品：</label>
                 <select id="product-0">
-                    <option value="醫用口罩">醫用口罩</option>
+                    <option value="醫療口罩">醫療口罩</option>
                     <option value="手套">手套</option>
                     <option value="酒精">酒精</option>
                 </select>
@@ -49,15 +137,15 @@
                 <button type="button" onclick="removeItem(0)">刪除商品</button>
             </div>
         </div>
-        <button type="button" onclick="addItem()">新增商品</button>
+        <button type="button" class="btn" onclick="addItem()">新增商品</button>
         <br><br>
-        <button onclick="showOrder()">查看訂單</button>
+        <button class="btn" onclick="showOrder()">查看訂單</button>
     </div>
 
-    <div id="order-summary" style="display: none; margin-top: 20px;">
+    <div id="order-summary" style="display: none;">
         <h2>訂單明細</h2>
         <p id="order-details"></p>
-        <button onclick="sendOrder()">送出訂單</button>
+        <button class="btn" onclick="sendOrder()">送出訂單</button>
     </div>
 
     <script>
@@ -87,10 +175,11 @@
             const container = document.getElementById('order-items-container');
             const newItem = document.createElement('div');
             newItem.classList.add('order-item');
+            newItem.id = `item-${orderItemCount}`;
             newItem.innerHTML = `
                 <label for="product-${orderItemCount}">選擇商品：</label>
                 <select id="product-${orderItemCount}">
-                    <option value="醫用口罩">醫用口罩</option>
+                    <option value="醫療口罩">醫療口罩</option>
                     <option value="手套">手套</option>
                     <option value="酒精">酒精</option>
                 </select>
@@ -104,7 +193,7 @@
 
         // 刪除商品
         function removeItem(index) {
-            const itemToRemove = document.getElementById(`product-${index}`).parentElement;
+            const itemToRemove = document.getElementById(`item-${index}`);
             itemToRemove.remove();
         }
 
