@@ -50,11 +50,11 @@
     </div>
 
     <script>
-        const liffId = process.env.NEXT_PUBLIC_LIFF_ID; // 在這裡填入你的 LIFF ID
+        const liffId = import.meta.env.NEXT_PUBLIC_LIFF_ID; // 在這裡填入你的 LIFF ID
 
         // 初始化 LIFF SDK
         function initializeLiff() {
-            liff.init({liffId})
+            liff.init({ liffId: liffId })
                 .then(() => {
                     console.log('LIFF 初始化成功');
                     if (liff.isLoggedIn()) {
