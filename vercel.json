@@ -1,0 +1,13 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "index.html",
+        "use": "@vercel/static"
+      }
+    ],
+    "env": {
+      "NEXT_PUBLIC_LIFF_ID": "@NEXT_PUBLIC_LIFF_ID"
+    }
+  }
+  
