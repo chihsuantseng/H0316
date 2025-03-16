@@ -23,7 +23,7 @@
     <script>
         // 1️⃣ 初始化 LIFF
         function initializeLiff() {
-            liff.init({ liffId: "HHH" })
+            liff.init({ liffId: "liffId" })
                 .then(() => {
                     console.log("LIFF 初始化成功");
                     if (!liff.isLoggedIn()) {
@@ -54,6 +54,20 @@
 
         // 4️⃣ 網頁載入時初始化 LIFF
         window.onload = initializeLiff;
+
+
+        const liffId = process.env.LIFF_ID;
+liff.init({ liffId: liffId })
+  .then(() => {
+    // LIFF 初始化成功
+  })
+  .catch((err) => {
+    console.error("LIFF Initialization failed", err);
+  });
+
     </script>
+
+
+
 </body>
 </html>
